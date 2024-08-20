@@ -4,7 +4,9 @@ const {ApolloServer} = require("apollo-server-express");
 const {mergeTypeDefs,mergeResolvers} = require('@graphql-tools/merge')
 const {makeExecutableSchema} = require('@graphql-tools/schema')
 const userSchema = require('./schemas/user.schema');
+const eventSchema = require('./schemas/event.schema');
 const userResolver = require('./resolvers/user.resolvers');
+const eventResolver = require('./resolvers/event.resolvers');
 const contextMiddleware = require('./middlewares/context');
 const db = require('./models/index');
 
@@ -13,8 +15,8 @@ const app = express();
 
 async function startApollo(){
     const schema = makeExecutableSchema({
-        typeDefs:mergeTypeDefs([userSchema]),
-        resolvers:mergeResolvers([userResolver])
+        typeDefs:mergeTypeDefs([userSchema,eventSchema]),
+        resolvers:mergeResolvers([userResolver,eventResolver])
     });
 
     const server = new ApolloServer({

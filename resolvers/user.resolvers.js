@@ -65,6 +65,36 @@ const userResolver = {
                 console.error(`Error changing password: ${error.message}`);
                 throw new Error(error.message);
             }
+        },
+
+        resetPassword:async (_,{input})=>{
+            try {
+                const {email} = input;
+                if(!email){
+                    throw new Error ("Email is required");
+                }
+
+                const result = await userService.resetPassword(input);
+                return result;
+            } catch (error) {
+                console.log(`Password reset failed: ${error.message}`);
+                throw new Error(error.message);
+            }
+        },
+
+        updatePassword:async (_,{input})=>{
+            try {
+                const {token,newPassword} = input;
+                if(!token || !newPassword){
+                    throw new Error ("Token and password is required");
+                }
+
+                const result = await userService.updatePassword(input)
+                return result;
+            } catch (error) {
+                console.log(`Password update failed: ${error.message}`);
+                throw new Error(error.message);
+            }
         }
     }
 }

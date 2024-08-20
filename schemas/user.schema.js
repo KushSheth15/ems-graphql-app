@@ -15,7 +15,17 @@ const userSchema = gql`
       accessToken:String!
     }
 
-    type chnagePasswordResponse{
+    type ChangePasswordResponse{
+      success:Boolean!
+      message:String!
+    }
+
+    type ResetPasswordResponse{
+      message:String!
+      resetToken:String!
+    }
+
+    type UpdatePasswordResponse{
       success:Boolean!
       message:String!
     }
@@ -27,7 +37,9 @@ const userSchema = gql`
     type Mutation{
       register(input:RegisterInput!):User!
       login(input:LoginInput!):AuthLogin!
-      changePassword(input:changePasswordInput!):chnagePasswordResponse!
+      changePassword(input:ChangePasswordInput!):ChangePasswordResponse!
+      resetPassword(input:ResetPasswordInput!):ResetPasswordResponse!
+      updatePassword(input:UpdatePasswordInput!):UpdatePasswordResponse!
     }
 
     input RegisterInput{
@@ -42,8 +54,17 @@ const userSchema = gql`
       password:String!
     }
 
-    input changePasswordInput{
+    input ChangePasswordInput{
       currentPassword:String!
+      newPassword:String!
+    }
+
+    input ResetPasswordInput{
+      email:String!
+    }
+
+    input UpdatePasswordInput{
+      token:String!
       newPassword:String!
     }
 

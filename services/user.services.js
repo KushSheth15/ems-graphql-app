@@ -79,6 +79,50 @@ const userService = {
             console.error(`Failed to change password: ${error.message}`);
             throw new Error(error.message);
         }
+    },
+
+    resetPassword: async (input)=>{
+        try {
+            const {email} = input;
+            const user = await User.findOne({where:{email}});
+            if(!user){
+                throw new Error('User not found');
+            }
+
+            const resetToken = authUtils.generateResetToken({id:user.id,firstName:user.firstName})
+            await Token.create({
+                userId: user.id,
+                token: resetToken,
+                token_type:'RESET',  
+                expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000)              
+            });
+
+            return {message:'Password reset request sent successfully',resetToken};
+        } catch (error) {
+            console.log('Password Reset Failed',error.message);
+            throw new Error(error.message);
+        }
+    },
+
+    updatePassword:async (input)=>{
+        try {
+            const {token,newPassword} = input;
+            const decodedToken = jwt.verify(token,process.env.SECRET_KEY);
+
+            const user = await User.findOne({where:{id:decodedToken.id}});
+            if(!user){
+                throw new Error('Invalid token or expired token');
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword,10);
+            user.password = hashedPassword;
+            await user.save();
+
+            return {success: true,message:'Password Updated successfully'};
+        } catch (error) {
+            console.log(`Password update failed: ${error.message}`);
+            throw new Error(error.message);
+        }
     }
 }
 
